@@ -1,0 +1,16 @@
+# Practical 9: High Availability Container Orchestration with Docker Swarm Master-Worker Setup on AWS EC2
+
+# Initialize swarm on Manager Node
+docker swarm init
+
+# Copy and run the Manager join token on second manager
+# Copy and run the Worker join token on worker nodes
+
+# List all nodes
+docker node ls
+
+# Promote worker to manager
+docker node promote <worker-node-id>
+
+# Demote node
+docker node demote <manager-node-id>
