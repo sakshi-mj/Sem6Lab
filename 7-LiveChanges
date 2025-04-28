@@ -54,3 +54,6 @@ echo "<h1>UPDATED LIVE - Docker Bind Mount!</h1>" > html/index.html
 
 # Step 11: To Stop and remove containers
 docker-compose down
+
+#without compose 
+docker run --name wo-compose -d -p 7070:80 -v ./html:/usr/share/nginx/html nginx
