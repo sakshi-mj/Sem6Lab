@@ -1,0 +1,33 @@
+# Practical 5: Setting Up a MySQL Container and Configuring Database Access via MySQL Client
+
+# Install Docker
+sudo -i
+sudo apt-get update && sudo apt-get upgrade -y
+sudo apt install docker.io
+
+# Pull and run MySQL container
+docker pull mysql
+docker run --name namitdocker -e MYSQL_ROOT_PASSWORD=0000 -p 3306:3306 -d mysql
+
+# Access container and create database
+sudo docker exec -it namitdocker bash
+mysql -u root -p
+
+# Inside MySQL
+CREATE DATABASE namit;
+USE namit;
+CREATE TABLE college (username VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL);
+INSERT INTO college (username,email) VALUES('namit','namitagatwal761@gmail.com');
+
+# Exit
+exit
+exit
+
+# Install MySQL client
+sudo apt install mysql-client -y
+
+# Connect to MySQL server externally
+mysql -h your-ec2-ip -u root -p
+USE namit;
+SHOW TABLES;
+SELECT * FROM college;
