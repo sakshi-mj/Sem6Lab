@@ -1,0 +1,54 @@
+# Practical 8: Live Code Sharing Using Bind Mounts with Explicit Source/Target (Docker Compose)
+
+# Step 1: Install Docker and Docker Compose
+sudo -i
+sudo apt-get update
+sudo apt-get install docker.io docker-compose -y
+
+# Step 2: Create a working folder
+mkdir html
+cd html
+
+# Step 3: Download a free HTML/CSS template (example: CarVilla v1.0)
+wget https://www.free-css.com/assets/files/free-css-templates/download/page296/carvilla.zip
+
+# Step 4: Unzip the downloaded template
+apt-get install unzip -y   # (install unzip if not installed)
+unzip carvilla.zip
+
+# Now you have a folder like "carvilla-v1.0" inside html/
+
+# Step 5: Move back to project root
+cd ..
+
+# Step 6: Create a docker-compose.yml file
+vi docker-compose.yml
+
+# (Press i and paste below content carefully)
+
+version: "3.9"
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - type: bind
+        source: ./html/carvilla-v1.0
+        target: /usr/share/nginx/html
+
+# (Press ESC then :wq to save)
+
+# Step 7: Bring up the container
+docker-compose up -d
+
+# Step 8: Open browser and check
+# http://<your-ec2-ip>:8080
+# You should now see the CarVilla template running live!
+
+# Step 9: Test live update
+# Modify any HTML/CSS file inside ./html/carvilla-v1.0
+# Refresh browser → Changes appear immediately.
+
+# Step 10: To Stop and Remove containers
+docker-compose down
