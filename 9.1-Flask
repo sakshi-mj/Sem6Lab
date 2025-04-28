@@ -1,0 +1,174 @@
+# ---------------------------------------------
+# Title: Launch EC2 Instance
+# ---------------------------------------------
+
+# Step 1: Launch an EC2 instance:
+# - AMI: Ubuntu (latest LTS)
+# - Select or create a Keypair
+# - Create a Security Group allowing Custom TCP port 5000 (Anywhere)
+
+# ---------------------------------------------
+# Title: Connect to EC2 Instance via SSH
+# ---------------------------------------------
+
+# Replace YOUR-KEY.pem and PUBLIC-IP with your details
+ssh -i YOUR-KEY.pem ubuntu@PUBLIC-IP
+
+# ---------------------------------------------
+# Title: Become root and install Docker
+# ---------------------------------------------
+
+sudo -i
+apt update -y
+apt install docker.io -y
+apt install docker-compose -y
+
+# ---------------------------------------------
+# Title: Create Project Directory and Required Files
+# ---------------------------------------------
+
+mkdir demo10
+cd demo10
+touch app.py config.py models.py docker-compose.yml Dockerfile requirements.txt
+
+# ---------------------------------------------
+# Title: Edit and Add Content to Files Using vi
+# ---------------------------------------------
+
+# ------------------
+# Edit app.py
+# ------------------
+vi app.py
+
+# Paste the following into app.py:
+
+from flask import Flask
+from models import db, Hit
+import config
+
+app = Flask(__name__)
+app.config.from_object(config.Config)
+db.init_app(app)
+
+@app.route('/')
+def index():
+    with app.app_context():
+        hit = Hit()
+        db.session.add(hit)
+        db.session.commit()
+        count = Hit.query.count()
+        return f'This page has been viewed {count} times.'
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+
+# Save and exit: Press ESC -> type :wq -> ENTER
+
+
+# ------------------
+# Edit config.py
+# ------------------
+vi config.py
+
+# Paste the following into config.py:
+
+import os
+
+class Config:
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///db.sqlite3')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+# Save and exit
+
+
+# ------------------
+# Edit models.py
+# ------------------
+vi models.py
+
+# Paste the following into models.py:
+
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+
+class Hit(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+# Save and exit
+
+
+# ------------------
+# Edit docker-compose.yml
+# ------------------
+vi docker-compose.yml
+
+# Paste the following into docker-compose.yml:
+
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      - DATABASE_URL=sqlite:///db.sqlite3
+
+# Save and exit
+
+
+# ------------------
+# Edit Dockerfile
+# ------------------
+vi Dockerfile
+
+# Paste the following into Dockerfile:
+
+FROM python:3.8-slim
+
+WORKDIR /app
+
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+
+COPY . .
+
+CMD ["python", "app.py"]
+
+# Save and exit
+
+
+# ------------------
+# Edit requirements.txt
+# ------------------
+vi requirements.txt
+
+# Paste the following into requirements.txt:
+
+flask
+flask_sqlalchemy
+
+# Save and exit
+
+
+# ---------------------------------------------
+# Title: Build and Run Docker Compose
+# ---------------------------------------------
+
+docker-compose up --build -d
+
+# ---------------------------------------------
+# Title: Check Running Containers (Optional)
+# ---------------------------------------------
+
+docker ps
+
+# ---------------------------------------------
+# Title: Access the Flask Application
+# ---------------------------------------------
+
+# In your browser, visit:
+http://PUBLIC-IP:5000
+
