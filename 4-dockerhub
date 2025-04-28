@@ -1,0 +1,37 @@
+# Practical 4: Create and Push a Customized Docker Image to Your User Repository
+
+# Install Docker
+sudo -i
+sudo apt-get update && sudo apt-get upgrade -y
+sudo apt install docker.io
+docker -v
+
+# Create directory and Dockerfile
+mkdir namit
+cd namit
+sudo vi Dockerfile
+
+# (inside vi editor paste below)
+# This is a Sample Image
+FROM ubuntu
+MAINTAINER namittagarwwal761@gmail.com
+RUN apt-get update
+RUN apt-get install -y nginx
+CMD ["echo", "Image created"]
+
+# Save file (:wq)
+
+# Build Docker image
+docker build -t namit:07 .
+
+# Verify image
+docker images
+
+# Push to Docker Hub
+docker login
+docker tag namit:07 namit761/namit:07
+docker push namit761/namit:07
+
+# Remove local images
+docker rmi namit:07
+docker images
