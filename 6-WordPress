@@ -1,0 +1,13 @@
+# Practical 6: Setting Up Frontend WordPress and Backend MySQL Containers, Then Logging Into WordPress
+
+# Create docker network
+docker network create wp-network
+
+# Run MySQL container
+docker run --name sqlcont --network wp-network -e MYSQL_ROOT_PASSWORD=0000 -e MYSQL_DATABASE=db -p 3306:3306 -d mysql
+
+# Run WordPress container
+docker run --name wpcont --network wp-network -e WORDPRESS_DB_HOST=sqlcont -e WORDPRESS_DB_USER=root -e WORDPRESS_DB_PASSWORD=0000 -e WORDPRESS_DB_NAME=db -p 8080:80 -d wordpress
+
+# Install MySQL client
+apt update && apt install -y default-mysql-client
