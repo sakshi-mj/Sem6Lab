@@ -1,0 +1,56 @@
+# Practical 7: Implementing Live Changes in a Running Docker Container
+
+# Step 1: Install Docker and Docker Compose
+sudo -i
+sudo apt-get update
+sudo apt-get install docker.io docker-compose -y
+
+# Step 2: Create working project folder
+mkdir live-nginx
+cd live-nginx
+
+# Step 3: Create an 'html' folder inside
+mkdir html
+cd html
+
+# Step 4: Create a sample index.html inside 'html' folder
+echo "<h1>Live Update Example!</h1>" > index.html
+
+# Step 5: Go back to project root
+cd ..
+
+# Step 6: Create docker-compose.yml file
+vi docker-compose.yml
+
+# (Press i and paste below carefully)
+
+version: '3'
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./html:/usr/share/nginx/html
+
+# (Save: ESC :wq)
+
+# Step 7: Start nginx using docker-compose
+docker-compose up -d
+
+# Step 8: Check nginx is running
+docker ps
+
+# Step 9: Open browser and check
+# http://<your-ec2-ip>:8080
+# You should see "Live Update Example!" from index.html
+
+# Step 10: Test live changes
+# Edit html/index.html file
+
+echo "<h1>UPDATED LIVE - Docker Bind Mount!</h1>" > html/index.html
+
+# Now refresh browser → Changes reflect **immediately** without restarting nginx container.
+
+# Step 11: To Stop and remove containers
+docker-compose down
