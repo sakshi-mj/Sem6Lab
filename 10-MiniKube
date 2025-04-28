@@ -1,0 +1,24 @@
+# Practical 10: Deploying Minikube on a Cloud VM for Remote Kubernetes Development
+
+# Connect to EC2 instance
+ssh -i your-key.pem ubuntu@your-ec2-ip
+
+# Install Docker
+sudo -i
+apt update && apt upgrade -y
+apt install -y docker.io
+
+# Install kubectl
+curl -LO "https://dl.k8s.io/release/v1.29.1/bin/linux/amd64/kubectl"
+chmod +x kubectl
+sudo mv kubectl /usr/local/bin/
+
+# Install Minikube
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+
+# Start Minikube
+minikube start --driver=docker --force
+
+# Verify configuration
+kubectl config view
