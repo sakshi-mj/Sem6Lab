@@ -1,0 +1,13 @@
+# Practical 2: Run and verify a hello world docker container; Observe output and container state
+
+# Pull and run Hello World container
+docker run hello-world
+
+# Verify image is pulled
+docker images
+
+# List running containers
+docker container ls
+
+# List all containers (including stopped)
+docker container ls -a
